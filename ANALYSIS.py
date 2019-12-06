@@ -3,12 +3,12 @@
 import numpy as np
 import copy
 import matplotlib as mpl
-from matplotlib import pyplot as plt
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import LightSource
 from matplotlib import cm
 from matplotlib import animation
+from matplotlib import pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
 #plt.switch_backend('agg')
@@ -27,15 +27,9 @@ class Results() :
 
         self.ndir       = 62 #: define me
         self.ntimes     = 0  #: define me 
-        self.nocc_alpha = 0  #: define me 
-        self.nocc_beta  = 0  #: define me 
-        self.loss2   = {}    #: loss from occupied
-        self.loss    = {}    #: instantaneous loss
         self.rate    = {}    #: instantaneous rates
         self.results = {}    #: RESULTS*.OUT file
         self.field   = {}    #: field info read in from RESULTS*.OUT
-        self.holes   = {}
-        self.parts   = {}
         self.summary = {}    #: ground and excited state population
         self.pop = {}        #: population analysis
 
