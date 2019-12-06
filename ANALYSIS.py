@@ -3,20 +3,16 @@
 import numpy as np
 import copy
 import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.colors import LightSource
-from matplotlib import cm
-from matplotlib import animation
 from matplotlib import pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 
 #plt.switch_backend('agg')
-mpl.rcParams['axes.linewidth'] = 2.0
+mpl.rcParams['axes.linewidth']    = 2.0
 mpl.rcParams['xtick.major.width'] = 2.0
 mpl.rcParams['ytick.major.width'] = 2.0
-mpl.rcParams['xtick.labelsize'] = 13.0
-mpl.rcParams['ytick.labelsize'] = 13.0
+mpl.rcParams['xtick.labelsize']   = 13.0
+mpl.rcParams['ytick.labelsize']   = 13.0
 
 deg2rad = np.pi / 180.0
 
@@ -35,40 +31,6 @@ class Results() :
 
 
 
-    def read_loss2( self, rdir='none', edir='none', start=1, end=0 ) :
-
-        """ Read LOSS2-e#-d#.out files """
-
-        if rdir == 'none' :
-            print(' ERROR:  need to specify rdir="directory_of_files"' )
-            return
-        if edir == 'none' :
-            print( ' ERROR:  need to specify edir="int" for FILE-e"edir"-d#.out ' )
-            return
-
-        if end == 0 : end = self.ndir + 1 
-
-        for idir in range( start, end+1 ) :
-            
-            myfile = "{fdir}/LOSS2-e{edir}-d{idir}.out".format( fdir=rdir, edir=str(edir), idir=idir )
-            iloss2 = {}
-
-            with open( myfile, 'r' ) as infile:
-                
-                key_heading = infile.readline() 
-                key    = [ ikey for ikey in key_heading.split()[:] ]
-                values = [ [] for ivalue in range( len(key) ) ]
-                iloss2 = dict( zip(key,values) )
-
-                all_lines = infile.readlines()
-                for iline in all_lines[:-2] :
-                    ilist = iline.split()
-                    for i in range(len(key) ) : iloss2[key[i]].append( float(ilist[i]) )
-                        
-            self.loss2[idir] = copy.deepcopy( iloss2 )
-            
-            
-            
     def read_rates2( self, rdir='none', edir='none', start=1, end=0 ) :
 
         """ read RATE2-e#-d#.out files """
@@ -89,8 +51,7 @@ class Results() :
 
             with open( myfile, 'r' ) as infile:
                 
-                key_heading = infile.readline() 
-                key    = [ ikey for ikey in key_heading.split()[:] ]
+                key    = list( infile.readline().split() )
                 values = [ [] for ivalue in range( len(key) ) ]
                 irate  = dict( zip(key,values) )
 
@@ -100,40 +61,6 @@ class Results() :
                     for i in range(len(key) ) : irate[key[i]].append( float(ilist[i]) )
                         
             self.rate[idir] = copy.deepcopy( irate )
-
-
-
-    def read_loss( self, rdir='none', edir='none', start=1, end=0 ) :
-
-        """ read LOSS-e#-d#.out files """
-
-        if rdir == 'none' :
-            print(' ERROR:  need to specify rdir="directory_of_files"' )
-            return
-        if edir == 'none' :
-            print( ' ERROR:  need to specify edir="int" for FILE-e"edir"-d#.out ' )
-            return
-            
-        if end == 0 : end = self.ndir  
-
-        for idir in range( start, end+1 ) :
-
-            myfile = "{fdir}/LOSS_PY-e{edir}-d{idir}.out".format( fdir=rdir, edir=str(edir), idir=idir )
-            iloss  = {}
-
-            with open( myfile, 'r' ) as infile:
-                
-                key_heading = infile.readline() 
-                key    = [ ikey for ikey in key_heading.split()[:] ]
-                values = [ [] for ivalue in range( len(key) ) ]
-                iloss = dict( zip(key,values) )
-
-                all_lines = infile.readlines()
-                for iline in all_lines :
-                    ilist = iline.split()
-                    for i in range(len(key) ) : iloss[key[i]].append( float(ilist[i]) )
-                        
-            self.loss[idir] = copy.deepcopy( iloss )
 
 
 
@@ -155,9 +82,8 @@ class Results() :
 
             with open( myfile, 'r' ) as infile :
 
-                key_heading = infile.readline()
-                key = [ ikey for ikey in key_heading.split()[:] ]
-                values = [ [] for ival in range( len(key) ) ]
+                key      = list( infile.readline().split() )
+                values   = [ [] for ival in range( len(key) ) ]
                 isummary = dict( zip( key, values) )
     
                 all_lines = infile.readlines()
@@ -188,15 +114,12 @@ class Results() :
             with open( myfile, 'r' ) as infile :
                 
                 #: read in field data
-                field_line = infile.readline()
-                keys0      = [ ikey0 for ikey0 in field_line.split()[1:] ]
-                val_line0  = infile.readline()
-                values0    = [ float(ival0) for ival0 in val_line0.split()[1:] ]
-                ifield = dict( zip( keys0, values0 ) )
-
+                keys0   = list( infile.readline().split() )
+                values0 = [ float(ival0) for ival0 in list( infile.readline().split() ) ]
+                ifield  = dict( zip( keys0, values0 ) )
+                
                 #: read in Results data
-                key_line = infile.readline()
-                keys   = [ ikey for ikey in key_line.split()[1:] ]
+                keys   = list( infile.readline().split() )
                 values = [ [] for i in range( len(keys) ) ]
                 iresults = dict( zip(keys,values) )
                 
@@ -210,70 +133,6 @@ class Results() :
 
 
                     
-    def read_holes( self, rdir='none', edir='none' , start=1, end=0 ) :
-
-        if rdir == 'none' :
-            print(' ERROR:  need to specify rdir="directory_of_files"' )
-            return
-        if edir == 'none' :
-            print( ' ERROR:  need to specify edir="int" for FILE-e"edir"-d#.out ' )
-            return
-
-        if end == 0 : end = self.ndir  
-
-        for idir in range( start, end+1 ) :
-            
-            myfile = "{fdir}/HOLE_POP-e{edir}-d{idir}.out".format( fdir=rdir, edir=str(edir), idir=idir )
-            iholes = {}
-
-            with open( myfile, 'r' ) as infile:
-
-                key_heading = infile.readline()
-                keys   = key_heading.split()
-                values = [ [] for ivalue in range(len(keys)) ]
-                iholes = dict( zip(keys,values) )
-                
-                all_lines = infile.readlines()
-                for iline in all_lines :
-                    ilist = iline.split()
-                    for i in range(len(keys)) : iholes[keys[i]].append( float(ilist[i]) )
-            
-            self.holes[idir] = copy.deepcopy( iholes )
-
-
-
-    def read_parts( self, rdir='none', edir='none', start=1, end=0 ) :
-
-        if rdir == 'none' :
-            print(' ERROR:  need to specify rdir="directory_of_files"' )
-            return
-        if edir == 'none' :
-            print( ' ERROR:  need to specify edir="int" for FILE-e"edir"-d#.out ' )
-            return
-
-        if end == 0 : end = self.ndir  
-
-        for idir in range( start, end+1 ) :
-                        
-            myfile = "{fdir}/PART_POP-e{edir}-d{idir}.out".format( fdir=rdir, edir=str(edir), idir=idir )
-            iparts = {}
-            
-            with open( myfile, 'r' ) as infile:
-
-                key_heading = infile.readline()
-                keys   = key_heading.split()
-                values = [ [] for ivalue in range(len(keys)) ]
-                iparts = dict( zip(keys,values) )
-                
-                all_lines = infile.readlines()
-                for iline in all_lines :
-                    ilist = iline.split()
-                    for i in range(len(keys)) : iparts[keys[i]].append( float(ilist[i]) )
-            
-            self.parts[idir] = copy.deepcopy( iparts )
-
-
-
     def read_pop( self, rdir='none', edir='none', start=1, end=0 ) :
 
         if rdir == 'none' :
@@ -292,8 +151,7 @@ class Results() :
             
             with open( myfile, 'r' ) as infile:
 
-                key_heading = infile.readline()
-                keys   = key_heading.split()
+                keys   = list( infile.readline().split() )
                 values = [ [] for ivalue in range(len(keys)) ]
                 ipop = dict( zip(keys,values) )
                 
@@ -368,8 +226,8 @@ class Results() :
         
     def plot_angular(self, popt, getxyz = False ) :
 
-        #from mpl_toolkits.mplot3d import Axes3D
-        #from matplotlib.colors import LightSource
+        from mpl_toolkits.mplot3d import Axes3D
+        from matplotlib.colors import LightSource
 
         #: set grid
         theta, phi = np.linspace(0, np.pi, 40), np.linspace(0, 2.0*np.pi, 40)
@@ -406,32 +264,6 @@ class Results() :
         plt.show()
 
 
-    def plot_contour(self, popt ) :
-    
-        x = {'30':[], '60':[], '90':[] }
-        y = {'30':[], '60':[], '90':[] }
-        z = {'30':[], '60':[], '90':[] }
-        phi = np.linspace(0, 2.0*np.pi, 40)
-        for itheta in ( 30, 60, 90 ) :
-            theta = itheta*deg2rad
-            fitted_data = np.zeros( (40 ) )
-            for iphi in range(phi.size) :
-                angles = (theta,phi[iphi])
-                fitted_data[iphi] = np.absolute( self.fit_func( angles, *popt ) )
-                x[str(itheta)] = np.sqrt(fitted_data) * np.cos( phi ) #* np.sin(theta)
-                y[str(itheta)] = np.sqrt(fitted_data) * np.sin( phi ) #* np.sin(theta)
-                z[str(itheta)] = np.sqrt(fitted_data) * np.cos(theta)
-                
-        fig, ax1 = plt.subplots()
-        ax1.plot( x['30'], y['30'], label='theta=30' )
-        ax1.plot( x['60'], y['60'], label='theta=60' )
-        ax1.plot( x['90'], y['90'], label='theta=90' )
-        ax1.set_xlabel('x')
-        ax1.set_ylabel('y')
-        ax1.legend()
-        plt.show()
-
-
 #---------------------------------------------------------------------------------------------------#
 #ch3i = Results()
 #ch3i.ndir = 62
@@ -439,4 +271,4 @@ class Results() :
 
 #ch3i.read_results( rdir='/wsu/home/gq/gq39/gq3921/SYSTEMS/ch3i/static/RESULTS/',edir='1' )
 #popt = ch3i.get_angular(itime=200)
-#ch3i.plot_contour(popt)
+
