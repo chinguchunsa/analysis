@@ -1,0 +1,47 @@
+  --> allocated ci_vec 
+  --> finished reading ci_vec 
+  --> allocated dipx, dipy, dipz, vabs 
+  --> finished reading MO elements
+ --> unrestricted 
+  --> allocated hole, part 
+  --> finished assigning hole and part indices
+ *******************
+ working on direction1
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction2
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction3
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction4
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction5
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction6
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction7
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction8
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction9
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
+ *******************
+ working on direction10
+  --> allocated time, norm_sq, efield, dirx, diry, dirz 
+  --> finished reading psi(t)
