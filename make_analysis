@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo ' '
+echo " ****************** "
+echo " writing analysis.in "
+echo " ...... done ....... "
+echo " ****************** "
+echo ''
+
+
+myfile='analysis.in'
+
+
+if [ -f $myfile ] ; then rm $myfile ; fi
+touch -a $myfile
+
+
+echo '&FILES' >> $myfile
+echo "f_cidir      = 'DIRECTORY_OF_CI*.bin'"  >> $myfile
+echo "f_mo_restart = 'OUTPUT_RESTART_MO.bin'" >> $myfile
+echo "f_restart    = 'OUTPUT_RESTART.bin'"    >> $myfile
+echo "e_d          = '-e1-d' " >> $myfile
+echo '/' >> $myfile
+echo '&JOB_DETAILS'    >> $myfile
+echo "jobtype = 'cis'" >> $myfile
+echo 'start_dir  = 1'  >> $myfile
+echo 'end_dir    = 62'  >> $myfile
+echo 'start_time = 1 '  >> $myfile
+echo 'end_time   = 320' >> $myfile
+echo 'unrestricted   = .True.' >> $myfile
+echo 'Qprint_movie   = .False.' >> $myfile
+echo 'Qget_dos       = .False. ' >> $myfile
+echo 'Qget_mo_den    = .False.'  >> $myfile
+echo 'Qget_rate_occ  = .False.'  >> $myfile
+echo '/' >> $myfile
+echo ''  >> $myfile
+
+
+
