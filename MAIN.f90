@@ -56,6 +56,7 @@ program analysis
   
   do idir=start_dir, end_dir
      
+
      write(iout,"(' *******************')" )  
      write(iout,"(' working on direction',i0)" )  idir
      flush(iout)
@@ -68,18 +69,10 @@ program analysis
      case( 'cis' ) ; call summarize_coefficients(idir)  !: summarize ground and total excited state populations
      case( 'ip' )  ; call summarize_coefficients_ip(idir)
      end select
-     if( Qget_rate ) then
-        select case( trim(jobtype) ) 
-        case( 'cis' ) ; call get_rate(idir)         !: get rate 
-        case( 'ip'  ) ; call get_rate_ip(idir)
-        end select
-     end if
+
      if( Qget_rate_occ ) then
         select case( trim(jobtype) ) 
-        case( 'cis' ) 
-           call get_rate_occ(idir) 
-           !call get_rate_ia(idir)
-           call get_rate_ground(idir)
+        case( 'cis' ) ; call get_rate_occ(idir) 
         case( 'ip'  ) ; call get_rateAB_ip( idir )     !: get hole in occ
         end select
      end if
