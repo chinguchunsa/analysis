@@ -14,9 +14,7 @@ program analysis
   
   namelist /FILES/ f_cidir, f_mo_restart, f_restart, e_d
   namelist /JOB_DETAILS/ start_dir, end_dir, start_time, end_time, unrestricted, &
-       jobtype, Qprint_pretty, Qprint_python, Qprint_movie, &
-       Qget_dos, Qget_mo_den, Qget_rate, Qget_rate_occ, Qget_trans_den
-  
+       jobtype, Qprint_movie, Qget_dos, Qget_mo_den, Qget_rate_occ
   
   !: set default
   e_d = '-e1-d'
@@ -69,7 +67,7 @@ program analysis
      case( 'cis' ) ; call summarize_coefficients(idir)  !: summarize ground and total excited state populations
      case( 'ip' )  ; call summarize_coefficients_ip(idir)
      end select
-
+     
      if( Qget_rate_occ ) then
         select case( trim(jobtype) ) 
         case( 'cis' ) ; call get_rate_occ(idir) 
@@ -79,10 +77,9 @@ program analysis
      if( Qget_mo_den )  then
         select case( trim(jobtype)  )
         case( 'cis' ) ; call get_density( idir )     !: get population and density matrix
-        case( 'ip' ) ; call get_density_ip( idir )   !: get population and density matrix
+        case( 'ip' )  ; call get_density_ip( idir )  !: get population and density matrix
         end select
      end if
-     if( Qget_trans_den ) call get_hp_density( idir )  !: get hole and particle density matrix
      
   end do
   

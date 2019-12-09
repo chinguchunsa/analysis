@@ -34,14 +34,10 @@ module global_variables
 
     
     logical(8) :: &
-         Qprint_pretty,  & !: print human-readable form
-         Qprint_python,  & !: print for python analysis
          Qprint_movie,   & !: print density for movie making
          Qget_dos,       & !: get density of states
-         Qget_rate,      & !: compute total loss from pop
          Qget_rate_occ,  & !: compute total loss from occupied
-         Qget_mo_den,    & !: get MO density and population
-         Qget_trans_den    !: get hole and particle densities
+         Qget_mo_den       !: get MO density and population
     
     
     real(8), parameter :: au2fs = 2.418884326509d-2
@@ -59,7 +55,7 @@ module global_variables
     integer(8), allocatable :: hole1(:), part1(:), hole_indices(:,:)    
     integer(8), allocatable :: hole(:,:), part(:,:)
       
-
+    
     !: read in matrix elements in MO
     real(8), allocatable :: dipx_a(:,:), dipy_a(:,:), dipz_a(:,:), vabs_a(:,:)
     real(8), allocatable :: dipx_b(:,:), dipy_b(:,:), dipz_b(:,:), vabs_b(:,:)

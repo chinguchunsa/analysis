@@ -34,14 +34,13 @@ read_mo:
     180, Loop not vectorized/parallelized: contains call
     181, Loop not vectorized/parallelized: contains call
   Timing stats:
-    init                    33 millisecs    13%
-    import                  16 millisecs     6%
-    expand                  33 millisecs    13%
-    vectorize               34 millisecs    13%
-    optimize                16 millisecs     6%
-    schedule                84 millisecs    33%
-    unroll                  34 millisecs    13%
-    Total time             250 millisecs
+    init                    83 millisecs    27%
+    import                  49 millisecs    16%
+    expand                  17 millisecs     5%
+    vectorize               51 millisecs    17%
+    schedule                84 millisecs    28%
+    unroll                  16 millisecs     5%
+    Total time             300 millisecs
 mod_utils.f90:
 get_indices:
      19, Memory zero idiom, loop replaced by call to __c_mzero8
@@ -85,12 +84,14 @@ get_1density_ip:
     168, Zero trip check eliminated
          Loop not vectorized: data dependency
   Timing stats:
-    init                    32 millisecs    14%
-    import                  17 millisecs     7%
-    vectorize               68 millisecs    31%
-    optimize                33 millisecs    15%
-    schedule                66 millisecs    30%
-    Total time             216 millisecs
+    init                    33 millisecs    13%
+    import                  34 millisecs    13%
+    expand                  17 millisecs     6%
+    vectorize               33 millisecs    13%
+    optimize                34 millisecs    13%
+    schedule                66 millisecs    26%
+    unroll                  33 millisecs    13%
+    Total time             250 millisecs
 mod_rates.f90:
 get_rate_occ:
      28, Memory zero idiom, loop replaced by call to __c_mzero8
@@ -260,14 +261,12 @@ get_rateab_ip:
     375, Loop not vectorized/parallelized: contains call
     378, Loop not vectorized/parallelized: contains call
   Timing stats:
-    init                    67 millisecs     9%
-    import                  17 millisecs     2%
-    expand                  17 millisecs     2%
-    vectorize              217 millisecs    31%
-    optimize               100 millisecs    14%
-    schedule               249 millisecs    35%
-    unroll                  33 millisecs     4%
-    Total time             700 millisecs
+    init                    48 millisecs     8%
+    vectorize              201 millisecs    35%
+    optimize                67 millisecs    11%
+    schedule               234 millisecs    41%
+    unroll                  16 millisecs     2%
+    Total time             566 millisecs
 mod_density.f90:
 get_density:
      40, Memory zero idiom, loop replaced by call to __c_mzero8
@@ -292,100 +291,35 @@ get_density:
     126, Memory copy idiom, loop replaced by call to __c_mcopy8
     130, Barrier
     131, Parallel region terminated
-    150, Loop not vectorized/parallelized: contains call
-    151, Loop not vectorized/parallelized: contains call
-    153, Loop not vectorized/parallelized: contains call
-    154, Loop not vectorized/parallelized: contains call
-    172, Loop not vectorized/parallelized: contains call
+    139, Loop not vectorized/parallelized: contains call
+    140, Loop not vectorized/parallelized: contains call
+    144, Loop not vectorized/parallelized: contains call
+    145, Loop not vectorized/parallelized: contains call
+    170, Memory copy idiom, loop replaced by call to __c_mcopy8
+         Loop not parallelized: innermost
     173, Loop not vectorized/parallelized: contains call
-    177, Loop not vectorized/parallelized: contains call
-    178, Loop not vectorized/parallelized: contains call
-    203, Memory copy idiom, loop replaced by call to __c_mcopy8
+    181, Memory copy idiom, loop replaced by call to __c_mcopy8
          Loop not parallelized: innermost
-    206, Loop not vectorized/parallelized: contains call
-    214, Memory copy idiom, loop replaced by call to __c_mcopy8
-         Loop not parallelized: innermost
-    217, Loop not vectorized/parallelized: contains call
-get_hp_density:
-    261, Memory zero idiom, loop replaced by call to __c_mzero8
-         Loop not parallelized: innermost
-    262, Memory zero idiom, loop replaced by call to __c_mzero8
-         Loop not parallelized: innermost
-    265, Parallel region activated
-    270, Parallel loop activated with static block schedule
-    272, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
-    273, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
-    278, Generated vector simd code for the loop
-         Generated a prefetch instruction for the loop
-    283, Generated vector simd code for the loop
-         Generated a prefetch instruction for the loop
-    289, FMA (fused multiply-add) instruction(s) generated
-    314, Zero trip check eliminated
-         Invariant if transformation
-         Loop not vectorized: data dependency
-    342, Memory copy idiom, loop replaced by call to __c_mcopy8
-    343, Memory copy idiom, loop replaced by call to __c_mcopy8
-    346, Barrier
-    347, Parallel region terminated
-    357, Loop not vectorized/parallelized: contains call
-    358, Loop not vectorized/parallelized: contains call
-    364, Memory copy idiom, loop replaced by call to __c_mcopy8
-         Loop not parallelized: innermost
-    365, Memory copy idiom, loop replaced by call to __c_mcopy8
-         Loop not fused: function call before adjacent loop
-         Parallel code generated with block distribution if trip count is greater than or equal to 50
-         Loop not parallelized: innermost
-         Loop not vectorized: may not be beneficial
-         Loop unrolled 16 times
-         Generated 2 prefetches in scalar loop
-    368, Memory copy idiom, array assignment replaced by call to pgf90_mcopy8
-    369, Memory copy idiom, array assignment replaced by call to pgf90_mcopy8
-         Loop not fused: function call before adjacent loop
-         Parallel code generated with block distribution if trip count is greater than or equal to 50
-         Loop not vectorized: may not be beneficial
-         Loop unrolled 16 times
-         Generated 2 prefetches in scalar loop
-    373, Loop not vectorized/parallelized: contains call
-    374, Loop not vectorized/parallelized: contains call
-    389, Loop not vectorized/parallelized: contains call
-    390, Loop not vectorized/parallelized: contains call
-    396, Memory copy idiom, loop replaced by call to __c_mcopy8
-         Loop not parallelized: innermost
-    397, Memory copy idiom, loop replaced by call to __c_mcopy8
-         Loop not fused: function call before adjacent loop
-         Parallel code generated with block distribution if trip count is greater than or equal to 50
-         Loop not parallelized: innermost
-         Loop not vectorized: may not be beneficial
-         Loop unrolled 16 times
-         Generated 2 prefetches in scalar loop
-    400, Memory copy idiom, array assignment replaced by call to pgf90_mcopy8
-    401, Memory copy idiom, array assignment replaced by call to pgf90_mcopy8
-         Loop not fused: function call before adjacent loop
-         Parallel code generated with block distribution if trip count is greater than or equal to 50
-         Loop not vectorized: may not be beneficial
-         Loop unrolled 16 times
-         Generated 2 prefetches in scalar loop
-    405, Loop not vectorized/parallelized: contains call
-    406, Loop not vectorized/parallelized: contains call
+    184, Loop not vectorized/parallelized: contains call
 get_density_ip:
-    437, Memory zero idiom, loop replaced by call to __c_mzero8
+    223, Memory zero idiom, loop replaced by call to __c_mzero8
          Loop not parallelized: innermost
-    438, Memory zero idiom, loop replaced by call to __c_mzero8
+    224, Memory zero idiom, loop replaced by call to __c_mzero8
          Loop not parallelized: innermost
-    441, Parallel region activated
-    447, Parallel loop activated with static block schedule
+    227, Parallel region activated
+    233, Parallel loop activated with static block schedule
          Loop not vectorized/parallelized: contains call
-    454, Generated vector simd code for the loop
+    240, Generated vector simd code for the loop
          Generated a prefetch instruction for the loop
-    458, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
-    459, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
-    460, Loop not vectorized: may not be beneficial
+    244, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
+    245, Memory zero idiom, array assignment replaced by call to pgf90_mzero8
+    246, Loop not vectorized: may not be beneficial
          Loop unrolled 4 times
-    463, Loop not vectorized: may not be beneficial
+    249, Loop not vectorized: may not be beneficial
          Loop unrolled 4 times
-    476, Zero trip check eliminated
+    262, Zero trip check eliminated
          Loop not vectorized: data dependency
-    555, Array assignment / Forall at line 556 fused
+    341, Array assignment / Forall at line 342 fused
          Generated 2 alternate versions of the loop
          Generated vector simd code for the loop
          Generated 2 prefetch instructions for the loop
@@ -393,20 +327,19 @@ get_density_ip:
          Generated 2 prefetch instructions for the loop
          Generated vector simd code for the loop
          Generated 2 prefetch instructions for the loop
-    560, Barrier
-    561, Parallel region terminated
-    580, Loop not vectorized/parallelized: contains call
-    581, Loop not vectorized/parallelized: contains call
-    582, Loop not vectorized/parallelized: contains call
-    583, Loop not vectorized/parallelized: contains call
+    346, Barrier
+    347, Parallel region terminated
+    364, Loop not vectorized/parallelized: contains call
+    365, Loop not vectorized/parallelized: contains call
+    366, Loop not vectorized/parallelized: contains call
+    367, Loop not vectorized/parallelized: contains call
   Timing stats:
-    init                    34 millisecs     5%
-    import                  16 millisecs     2%
-    vectorize              134 millisecs    20%
-    optimize                67 millisecs    10%
-    schedule               382 millisecs    57%
-    unroll                  33 millisecs     4%
-    Total time             666 millisecs
+    init                    33 millisecs    11%
+    import                  33 millisecs    11%
+    vectorize              117 millisecs    39%
+    optimize                33 millisecs    11%
+    schedule                84 millisecs    28%
+    Total time             300 millisecs
 mod_misc.f90:
 get_dos:
      20, Loop not vectorized/parallelized: contains call
@@ -449,16 +382,15 @@ summarize_coefficients_ip:
     238, Loop not vectorized/parallelized: contains call
     241, Loop not vectorized/parallelized: contains call
   Timing stats:
-    init                    16 millisecs     6%
-    import                  49 millisecs    19%
-    vectorize               85 millisecs    34%
-    optimize                32 millisecs    12%
-    schedule                68 millisecs    27%
-    Total time             250 millisecs
+    init                    33 millisecs    16%
+    vectorize               51 millisecs    25%
+    optimize                34 millisecs    17%
+    schedule                66 millisecs    33%
+    unroll                  16 millisecs     8%
+    Total time             200 millisecs
 MAIN.f90:
 analysis:
-     57, Loop not vectorized/parallelized: contains call
+     55, Loop not vectorized/parallelized: contains call
   Timing stats:
-    init                    16 millisecs    48%
-    expand                  17 millisecs    51%
-    Total time              33 millisecs
+    import                  16 millisecs   100%
+    Total time              16 millisecs
