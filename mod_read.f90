@@ -45,15 +45,14 @@ contains
        psi  = dcmplx( 0.d0,0.d0 )
     end if
     
-    
+    !: for circular.  need to fix for linear
     allocate( readtmp(nstuse), creadtmp(nstuse) )  
+    
     do itime=1, ntimes1
-       
        read(100) time(itime), efield(itime), rdum, dirx(itime), diry(itime), dirz(itime), rdum, rdum, rdum, norm_sq(itime) 
        read(100) (  readtmp(i), i=1, nstuse )
        read(100) ( creadtmp(i), i=1, nstuse )
        psi(:,itime) = dcmplx( readtmp, creadtmp )
-
     end do
 
     close(100)
@@ -67,6 +66,7 @@ contains
     
   end subroutine read_tdci
   !:--------------------------:!
+  !: SUBROUTINE READ_CI_VEC   :!
   !:--------------------------:!
   subroutine read_ci_vec
     
@@ -81,11 +81,10 @@ contains
     read(100) nstates, nstuse
     
     allocate( ci_vec(nstates,nstates) )
-    read(100) ( ( ci_vec(j,i), j=1, nstates ), i=1, nstates )
-    
+    read(100) ( ( ci_vec(j,i), j=1, nstates ), i=1, nstates )    
     
     if ( Qget_dos ) then       
-
+       
        allocate( ci_vabs(nstates,nstates), ci_eig(nstates) )
        allocate( rdum(nstates*nstates) )
        allocate( tdx(nstates,nstates), tdy(nstates,nstates), tdz(nstates,nstates) )
@@ -115,17 +114,11 @@ contains
           ij = (i-1)*nstuse !+ j
           tdz(:,i) = rdum(ij+1:ij+nstuse)
        end do
-       
-       
-       read(100) ( ( ci_vabs(j,i), j=1, nstuse ) , i=1, nstuse )
 
-
-       !: pack down
-
+       !: vabs
+       read(100) ( ( ci_vabs(j,i), j=1, nstuse ) , i=1, nstuse )       
 
     end if
-    
-
     close(100) 
     
     
@@ -136,6 +129,7 @@ contains
     
   end subroutine read_ci_vec
   !:--------------------------:!
+  !: SUBROUTINE READ_MO       :!
   !:--------------------------:!
   subroutine read_mo
     

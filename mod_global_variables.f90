@@ -8,11 +8,11 @@ module global_variables
     
     integer(8),    parameter :: i_in  = 178
     character(12), parameter :: input = 'analysis.in'
-    !: outfile
-    
-    integer(8),    parameter :: iout = 78
-    character(20), parameter ::  log = 'analysis.out'
 
+    !: outfile    
+    integer(8),    parameter :: iout = 78
+    character(20), parameter :: log = 'analysis.out'
+    
     
     !: namelist for files
     character(10)   :: e_d
@@ -21,6 +21,7 @@ module global_variables
          f_restart,    & !: for CI vectors
          f_mo_restart    !: for MO matrix elements
 
+
     !: namelist for job
     integer(8) :: &
          start_dir,  & !: start analysis starting for this direction
@@ -28,6 +29,10 @@ module global_variables
          start_time, & !: start from this time point
          end_time      !: end with this time point
 
+
+    character(8) :: jobtype !: 'ip' or 'cis'
+
+    
     logical(8) :: &
          Qprint_pretty,  & !: print human-readable form
          Qprint_python,  & !: print for python analysis
@@ -39,7 +44,6 @@ module global_variables
          Qget_trans_den    !: get hole and particle densities
     
     
-
     real(8), parameter :: au2fs = 2.418884326509d-2
     real(8), parameter :: au2eV = 27.21138602d0
     
@@ -52,7 +56,7 @@ module global_variables
     
 
     !: state indices
-    integer(8), allocatable :: hole1(:), part1(:)
+    integer(8), allocatable :: hole1(:), part1(:), hole_indices(:,:)    
     integer(8), allocatable :: hole(:,:), part(:,:)
       
 
@@ -68,8 +72,5 @@ module global_variables
     real(8), allocatable :: efield(:), dirx(:), diry(:), dirz(:) 
     complex(8), allocatable :: psi(:,:)
     
-    
-    !include 'subroutine.f90'
-
     
   end module global_variables

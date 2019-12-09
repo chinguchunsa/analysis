@@ -744,6 +744,9 @@ contains
     close(100)
     
     
+    
+    
+    
 
   end subroutine get_rate_ground
   !:--------------------------:!
@@ -886,13 +889,12 @@ contains
     implicit none
 
     integer(8), intent(in) :: idir
-    
-    integer(8) :: itime, i, j, a, b, x, y, ia, jb
+
+    integer(8) :: itime, i, j, a, b, ia, jb, ii, jj, x,y, aa, bb, xx, yy
     real(8) :: norm, rdum, vsum, dt
-    real(8) :: rate_aa( noa, nob, start_time:end_time+1 ), rate_bb( nob, nob, start_time:end_time+1 ), rate_x(nob, start_time:end_time+1)
-    real(8) :: trate(start_time:end_time+1)
-    real(8) :: tmp_aa(noa,nob), tmp_bb(nob,nob), vdum
-    complex(8) :: psi_det(nstates), psi_ia, psi_x, psi_i, psi_y
+    real(8) :: rate_aa( noa, nob, start_time:end_time+1 ), rate_bb( nob, nob, start_time:end_time+1 ), trate(start_time:end_time+1)
+    real(8) :: tmp_aa(noa,nob), tmp_bb(nob,nob)
+    complex(8) :: psi_det(nstates), psi_ia, psi_jb
     
     !: write stuff
     character(5)    :: c0, ci
@@ -904,10 +906,6 @@ contains
     rate_aa = 0.d0
     rate_bb = 0.d0           
     
-    
-    dt = time(start_time+1) - time(start_time)
-
-
     vsum = 0.d0
     do i=1, noa
        vsum = vsum + vabs_a(i,i)
@@ -916,172 +914,122 @@ contains
        vsum = vsum + vabs_b(i,i)
     end do
     
+    dt = time(start_time+1) - time(start_time)
 
     itime : do itime=start_time, end_time
        
-       tmp_aa  = 0.d0
-       tmp_bb  = 0.d0
+       tmp_aa = 0.d0
+       tmp_bb = 0.d0
        
        !: save norm
        norm = norm_sq(itime)   
-       
+
        !: get psi into determinantal basis
        call get_psi_det( i, nstuse, nstates, ci_vec, psi(:,itime), psi_det )
        psi_det = psi_det / dsqrt(norm)
-       
 
-       !: doubles alpha beta
-       do x=1, nob
-          alpha : do i=1, noa
-                          
-             !: diagonal
-             rdum = 0.d0
-             ia   = hole_indices(-i,x) - 1 
-             do a=1, nva
-                rdum = rdum + real(dconjg(psi_det(ia+a))*psi_det(ia+a))
-             end do
-             rdum = rdum*vsum 
-             
-             !: contributions from c_x and c_i
-             rdum = rdum + dconjg(psi_det(x))*psi_det(x)*vabs_a(i,i)
-             
-
-             !: sum_a : 2c_ixa(t)c_x(t) <a|V|i>
-             ia = hole_indices(-i,x) - 1 
-             psi_x = dconjg( psi_det(x) )             
-             do a=1, nva
-                rdum = rdum + 2.d0*real(psi_x*psi_det(ia+a))*vabs_a(noa+a,i)
-             end do
-             
-             !: sum_ja : c_ixa(t)c_jxa(t) <j|V|i>
-             ia = hole_indices(-i,x) - 1 
-             do j=1, noa
-                jb = hole_indices(-j,x) - 1
-                vdum = vabs_a(j,i)
-                do a=1, nva
-                   rdum = rdum - real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
-             
-             !: sum_ya : c_ixa(t)c_iya(t) <y|V|x>
-             ia = hole_indices(-i,x) - 1 
-             do y=1, nob
-                jb   = hole_indices(-i,y) - 1 
-                vdum = vabs_b(y,x)
-                do a=1, nva
-                   rdum = rdum - real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
-             
-             !: sum_ab : c_ixa(t)c_ixb(t) <a|V|b>
-             ia = hole_indices(-i,x) - 1 
-             do a=1, nva
-                psi_ia = dconjg( psi_det(ia+a) )
-                do b=1, nva
-                   rdum = rdum + real(psi_ia*psi_det(ia+b))*vabs_a(noa+a,noa+b)
-                end do
-             end do
-             
-             !: record
-             tmp_aa(i,x) = rdum
-
-
-          end do alpha
+       do ia=1, nstates
           
-          beta : do i=x+1, nob
+          xx = hole(ia,1)
+          ii = hole(ia,2)
+          aa = part(ia,1)
+          psi_ia = dconjg(psi_det(ia))
+          
+          do jb=1, nstates
              
-             !: diagonal
-             rdum = 0.d0
-             ia = hole_indices(i,x) - 1 
-             do a=1, nvb
-                rdum = rdum + real(dconjg(psi_det(ia+a))*psi_det(ia+a))
-             end do
-             rdum = rdum * vsum 
+             yy = hole(jb,1)
+             jj = hole(jb,2)
+             bb = part(jb,1)
 
-
-             !: contributions from c_x and c_i
-             rdum = rdum + dconjg(psi_det(x))*psi_det(x)*vabs_b(i,i) &
-                  + dconjg(psi_det(i))*psi_det(i)*vabs_b(x,x) &
-                  + real( dconjg(psi_det(x))*psi_det(i) + dconjg(psi_det(i))*psi_det(x) )*vabs_b(i,x)
+             !: <X|A|Y>
+             SS: if ( ii.eq.0 .and. jj.eq.0 ) then
+                tmp_bb(yy,xx) = tmp_bb(yy,xx) - real(psi_ia*psi_det(jb))*vabs_a(yy,xx)
+                go to 78
+             end if SS
              
+             !: <iX->a|A|X>  or  <IX->A|A|X>
+             SD1: if ( YY.eq.XX .and. jj.eq.0 ) then
+                if ( ii.lt.0 ) tmp_aa(-ii,xx) = tmp_aa(-ii,xx) + real(psi_ia*psi_det(jb))*vabs_a(-aa,-ii)
+                if ( ii.gt.0 ) tmp_bb(ii,xx)  = tmp_bb(ii,xx)  + real(psi_ia*psi_det(jb))*vabs_b(aa,ii)
+                go to 78
+             end if SD1
+             !: <X|A|jX->b>
+             SD2: if ( YY.eq.XX .and. ii.eq.0 ) then
+                if ( jj.lt.0 ) tmp_aa(-jj,yy) = tmp_aa(-jj,yy) + real(psi_ia*psi_det(jb))*vabs_a(-jj,-bb)
+                if ( jj.gt.0 ) tmp_bb(jj,yy)  = tmp_bb(jj,yy)  + real(psi_ia*psi_det(jb))*vabs_b(jj,bb)
+                go to 78
+             end if SD2
+             !: <YX->A|A|Y>
+             SD3 : if ( YY.eq.II .and. jj.eq.0 ) then
+                tmp_bb(ii,xx) = tmp_bb(ii,xx) - real(psi_ia*psi_det(jb))*vabs_b(aa,xx)
+                go to 78
+             end if SD3
+             !: <X|A|XY->B>
+             SD4: if ( XX.eq.JJ .and. ii.eq.0 ) then
+                tmp_bb(jj,yy) = tmp_bb(jj,yy) - real(psi_ia*psi_det(jb))*vabs_b(yy,bb)
+                go to 78
+             end if SD4
              
-             !: sum_a : 2cixa(t)cx(t)<a|V|i> - 2cixa(t)ci(t)<a|V|x>
-             ia    = hole_indices(i,x) - 1 
-             psi_x = dconjg( psi_det(x) ) 
-             psi_i = dconjg( psi_det(i) )
-             do a=1, nvb
-                rdum = rdum + 2.d0*real(psi_x*psi_det(ia+a))*vabs_b(nob+a,i) - 2.d0*real(psi_i*psi_det(ia+a))*vabs_b(nob+a,x)
-             end do
-
-             !: sum_ja : cixa(t)cjxa(t)<j|V|i> for j < x 
-             ia = hole_indices(i,x) - 1 
-             do j=x+1, nob
-                jb   = hole_indices(j,x) - 1 
-                vdum = vabs_b(j,i)
-                do a=1, nvb
-                   rdum = rdum - real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
-
-             !: sum_ya : c_ixa(t)*ciya(t)<y|V|x> for y>i
-             ia = hole_indices(i,x) - 1 
-             do y=1, (i-1)
-                jb = hole_indices(i,y) - 1 
-                vdum = vabs_b(y,x)
-                do a=1, nvb
-                   rdum = rdum - real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
-
-             !: sum_ab : c_ixa(t)*cixb(t)<a|V|b>
-             ia = hole_indices(i,x) - 1 
-             do a=1, nvb
-                do b=1, nvb
-                   rdum = rdum + real(dconjg(psi_det(ia+a))*psi_det(ia+b))*vabs_b(nob+b,nob+a)
-                end do
-             end do
-
-             !:sum_ya : c_ixa(t)*cxya(t)<y|V|i> for y>x
-             ia = hole_indices(i,x) - 1 
-             do y=1, (x-1)
-                jb   = hole_indices(x,y) - 1 
-                vdum = vabs_b(y,i)
-                do a=1, nvb
-                   rdum = rdum + real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
-
-             !: sum_ja : c_ixa(t)*cjia(t)<j|V|x> for j<i
-             ia = hole_indices(i,x) - 1 
-             do j=(i+1), nob
-                jb   = hole_indices(j,i) - 1 
-                vdum = vabs_b(j,x)
-                do a=1, nvb
-                   rdum = rdum + real(dconjg(psi_det(ia+a))*psi_det(jb+a))*vdum
-                end do
-             end do
+             !: doubles
              
-             tmp_bb(i,x) = rdum
+             !: <ix->a|A|jx->a>
+             kdelta_xy_ab : if ( xx.eq.yy .and. aa.eq.bb ) then
+                if ( ii.lt.0 ) tmp_aa(-ii,xx) = tmp_aa(-ii,xx) - real(psi_ia*psi_det(jb))*vabs_a(-jj,-ii)
+                if ( ii.gt.0 ) tmp_bb(ii,xx)  = tmp_bb(ii,xx)  - real(psi_ia*psi_det(jb))*vabs_b(jj,ii)
+             end if kdelta_xy_ab
+             
+             !: <ix->a|A|ix->b>
+             kdelta_xy_ij : if ( xx.eq.yy .and. ii.eq.jj ) then
+                if ( aa.lt.0 ) tmp_aa(-ii,xx) = tmp_aa(-ii,xx) + real(psi_ia*psi_det(jb))*vabs_a(-aa,-bb)
+                if ( aa.gt.0 ) tmp_bb(ii,xx)  = tmp_bb(ii,xx)  + real(psi_ia*psi_det(jb))*vabs_b(aa,bb)
+             end if kdelta_xy_ij
+             
+             !: <ix->a|A|iy->a>
+             kdelta_ij_ab : if ( ii.eq.jj .and. aa.eq.bb ) then
+                if ( aa.lt.0 ) tmp_aa(-ii,xx) = tmp_aa(-ii,xx) - real(psi_ia*psi_det(jb))*vabs_b(yy,xx)
+                if ( aa.gt.0 ) tmp_bb(ii,xx)  = tmp_bb(ii,xx)  - real(psi_ia*psi_det(jb))*vabs_b(yy,xx)
+             end if kdelta_ij_ab
+             
+             !: <ix->a|A|xy->a>
+             kdelta_jx_ab : if ( JJ.eq.XX .and. AA.eq.BB ) then
+                tmp_bb(ii,xx) = tmp_bb(ii,xx) + real(psi_ia*psi_det(jb))*vabs_b(yy,ii)
+             end if kdelta_jx_ab
+             
+             !: <yx->a|A|jy->a>
+             kdelta_yi_ab : if (YY.eq.II .and. AA.eq.BB ) then
+                tmp_bb(ii,xx) = tmp_bb(ii,xx) + real(psi_ia*psi_det(jb))*vabs_b(jj,xx)
+             end if kdelta_yi_ab
+             
+             !: <yx->a|A|xy->b>
+             kdelta_iy_xj : if ( II.eq.YY .and. XX.eq.JJ ) then
+                tmp_bb(ii,xx) = tmp_bb(ii,xx) - real(psi_ia*psi_det(jb))*vabs_b(aa,bb)
+             end if kdelta_iy_xj
+             
+78           continue
+          
+          end do
 
-          end do beta
+          !: get diagonal
+          if ( ii.eq.0 ) tmp_bb(ii,ii)  = tmp_bb(ii,ii)  + dconjg(psi_ia)*psi_ia * vsum
+          if ( ii.lt.0 ) tmp_aa(-ii,xx) = tmp_aa(-ii,xx) + dconjg(psi_ia)*psi_ia * vsum
+          if ( ii.gt.0 ) tmp_bb(ii,xx)  = tmp_bb(ii,xx)  + dconjg(psi_ia)*psi_ia * vsum                       
           
        end do
-       
+
        trate(itime) = ( sum( tmp_aa ) + sum( tmp_bb ) ) * 2.d0 / au2fs
        rate_aa(:,:,itime) = tmp_aa(:,:)
        rate_bb(:,:,itime) = tmp_bb(:,:)
-       
        
     end do itime
 
     rate_aa = rate_aa * 2.d0 / au2fs
     rate_bb = rate_bb * 2.d0 / au2fs    
-
+        
 42  format( ' from_alpha ', i5'B', 10(1x,f8.5) )
 43  format( ' from_beta  ', i5'B', 10(1x,f8.5) )       
     if ( Qprint_pretty ) then
        write( c0, '(i0)' ) idir
-       ofile = 'RATE_IP'//trim(e_d)//trim(c0)//'.out'
+       ofile = 'TEST_RATE'//trim(e_d)//trim(c0)//'.out'
        open( unit=100, file=trim(ofile) )
        do itime=start_time, end_time
           write(100,"('time(fs) ',f10.5,' rate(fs-1) ',f15.10, ' comp_rate ', f15.10 )") time(itime), trate(itime), trate(itime)*norm_sq(itime)
@@ -1097,8 +1045,8 @@ contains
     
     
     !: print python
-    ofile='RATE_IP_PY'//trim(e_d)//trim(c0)//'.out'
-    pyfile='LOSS2_IP_PY'//trim(e_d)//trim(c0)//'.out'
+    ofile='TEST_RATE_PY'//trim(e_d)//trim(c0)//'.out'
+    pyfile='TEST_LOSS2_PY'//trim(e_d)//trim(c0)//'.out'
     open( unit=100, file=trim(ofile) )
     open( unit=200, file=trim(pyfile) )
     write(100,'(A)', advance='no') " time(fs) norm2 trate "
